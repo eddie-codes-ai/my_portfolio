@@ -78,7 +78,7 @@ function Navbar() {
             display: 'block',
           }}
         />
-        <span style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: 500 }}>
+        <span style={{ fontSize: '14px', color: 'var(--accent)', fontWeight: 500 }}>
           edwin.mwai://os
         </span>
       </div>
@@ -93,7 +93,7 @@ function Navbar() {
               href={link.href}
               onClick={(e) => handleNav(e, link.href)}
               style={{
-                fontSize: '12px',
+                fontSize: '15px',
                 color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
                 textDecoration: 'none',
                 transition: 'color var(--transition)',
