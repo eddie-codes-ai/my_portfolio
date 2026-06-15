@@ -13,99 +13,33 @@ function Architecture() {
       id="architecture"
       style={{
         minHeight: '100vh',
+        padding: '80px 80px',
+        width: '100%',
+        maxWidth: '1400px',
+        margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '80px 64px 64px',
-        maxWidth: '1200px',
-        margin: '0 auto',
       }}
     >
-      <div style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ color: 'var(--accent)', fontSize: '16px' }}>🗂</span>
-        <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '14px' }}>
-          $ system.architecture()
-        </span>
+        <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '15px' }}>$ system.architecture()</span>
+        <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '32px',
-        }}
-      >
-        {skills.map((skill) => (
-          <SkillBar key={skill.id} skill={skill} />
-        ))}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+        {skills.map((skill) => <SkillBar key={skill.id} skill={skill} />)}
       </div>
 
-      <div
-        style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border)',
-          borderRadius: 'var(--radius-lg)',
-          padding: '24px',
-        }}
-      >
-        <div
-          style={{
-            fontSize: '12px',
-            color: 'var(--text-muted)',
-            fontFamily: 'var(--font-mono)',
-            marginBottom: '20px',
-          }}
-        >
-          ~ /system/overview
-        </div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '16px',
-          }}
-        >
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '28px' }}>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '20px' }}>~ /system/overview</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
           {stats.map((stat) => (
-            <div
-              key={stat.label}
-              style={{
-                background: 'var(--bg-secondary)',
-                borderRadius: 'var(--radius-md)',
-                padding: '20px',
-                textAlign: 'center',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '28px',
-                  fontWeight: 600,
-                  color: 'var(--accent)',
-                  fontFamily: 'var(--font-mono)',
-                }}
-              >
-                {stat.value}
-              </div>
-              <div
-                style={{
-                  fontSize: '13px',
-                  color: 'var(--text-primary)',
-                  fontFamily: 'var(--font-mono)',
-                  marginTop: '4px',
-                }}
-              >
-                {stat.label}
-              </div>
-              <div
-                style={{
-                  fontSize: '11px',
-                  color: 'var(--text-muted)',
-                  fontFamily: 'var(--font-mono)',
-                  marginTop: '2px',
-                }}
-              >
-                {stat.sub}
-              </div>
+            <div key={stat.label} style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', padding: '24px', textAlign: 'center' }}>
+              <div style={{ fontSize: '32px', fontWeight: 600, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{stat.value}</div>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', marginTop: '6px' }}>{stat.label}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>{stat.sub}</div>
             </div>
           ))}
         </div>
