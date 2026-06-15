@@ -5,12 +5,7 @@ import TerminalCard from "../ui/TerminalCard";
 
 function CommitRow({ commit, timeAgo }: { commit: GitHubCommit; timeAgo: (ts: string) => string }) {
   return (
-    <a
-      href={commit.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="commit-row"
-    >
+    <a href={commit.url} target="_blank" rel="noopener noreferrer" className="commit-row">
       <span className="commit-arrow">-&gt;</span>
       <span className="commit-body">
         <span className="commit-message">{commit.message}</span>
@@ -33,34 +28,21 @@ export default function Logs() {
   useEffect(() => {
     const track = trackRef.current;
     if (!track || commits.length === 0) return;
-
-    // Cancel any previous animation
     if (animRef.current) cancelAnimationFrame(animRef.current);
     posRef.current = 0;
-
-    const speed = 1.0; // px per frame — lower = slower
-
+    const speed = 1.0;
     function animate() {
       if (!track) return;
       posRef.current += speed;
-
-      // Height of one set (half the total since we duplicated)
       const halfHeight = track.scrollHeight / 2;
-      if (posRef.current >= halfHeight) {
-        posRef.current = 0;
-      }
-
+      if (posRef.current >= halfHeight) posRef.current = 0;
       track.style.transform = `translateY(-${posRef.current}px)`;
       animRef.current = requestAnimationFrame(animate);
     }
-
     animRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-    };
+    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
   }, [commits]);
 
-  // Pause on hover
   function pauseScroll() {
     if (animRef.current) cancelAnimationFrame(animRef.current);
   }
@@ -68,7 +50,7 @@ export default function Logs() {
   function resumeScroll() {
     if (!trackRef.current || commits.length === 0) return;
     const track = trackRef.current;
-    const speed = 0.4;
+    const speed = 1.0;
     function animate() {
       posRef.current += speed;
       const halfHeight = track.scrollHeight / 2;
@@ -83,69 +65,88 @@ export default function Logs() {
 
   return (
     <section className="logs-section" id="logs">
-      <div className="logs-header">
-        <span className="logs-command">$ tail -f logs/activity.log</span>
+      <div className="logs-inner">
+        <div className="logs-header">
+          <span className="logs-icon">📋</span>
+          <span className="logs-command">$ tail -f logs/activity.log</span>
+          <div className="logs-rule" />
+        </div>
+
+        <TerminalCard title="activity.log — streaming" showDots>
+          <div className="logs-live-badge">
+            <span className="logs-live-dot" />
+            <span className="logs-live-text">LIVE</span>
+          </div>
+
+          <div className="logs-viewport" onMouseEnter={pauseScroll} onMouseLeave={resumeScroll}>
+            {loading && <div className="logs-state">fetching commits...</div>}
+            {error && !loading && (
+              <div className="logs-state logs-error">
+                ! rate limited — commits will load shortly. try refreshing in 60s.
+              </div>
+            )}
+            {!loading && !error && commits.length === 0 && (
+              <div className="logs-state">no recent commits found</div>
+            )}
+            {!loading && !error && commits.length > 0 && (
+              <div className="logs-track" ref={trackRef}>
+                {doubled.map((commit, i) => (
+                  <CommitRow key={`${commit.id}-${i}`} commit={commit} timeAgo={timeAgo} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="logs-prompt">
+            <span>$ </span>
+            <span className="logs-cursor-blink" />
+          </div>
+        </TerminalCard>
+
+        {lastUpdated && (
+          <p className="logs-updated">
+            last synced {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          </p>
+        )}
       </div>
-
-      <TerminalCard title="activity.log — streaming" showDots>
-        <div className="logs-live-badge">
-          <span className="logs-live-dot" />
-          <span className="logs-live-text">LIVE</span>
-        </div>
-
-        <div
-          className="logs-viewport"
-          onMouseEnter={pauseScroll}
-          onMouseLeave={resumeScroll}
-        >
-          {loading && (
-            <div className="logs-state">fetching commits...</div>
-          )}
-          {error && !loading && (
-            <div className="logs-state logs-error">! {error}</div>
-          )}
-          {!loading && !error && commits.length === 0 && (
-            <div className="logs-state">no recent commits found</div>
-          )}
-
-          {!loading && !error && commits.length > 0 && (
-            <div className="logs-track" ref={trackRef}>
-              {doubled.map((commit, i) => (
-                <CommitRow key={`${commit.id}-${i}`} commit={commit} timeAgo={timeAgo} />
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="logs-prompt">
-          <span>$ </span>
-          <span className="logs-cursor-blink" />
-        </div>
-      </TerminalCard>
-
-      {lastUpdated && (
-        <p className="logs-updated">
-          last synced {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-        </p>
-      )}
 
       <style>{`
         .logs-section {
-          padding: 4rem 2rem;
-          max-width: 860px;
-          margin: 0 auto;
+          padding: 80px 40px;
           width: 100%;
+          box-sizing: border-box;
+          display: flex;
+          justify-content: center;
+        }
+
+        .logs-inner {
+          width: 100%;
+          max-width: 1560px;
         }
 
         .logs-header {
-          margin-bottom: 1.25rem;
+          margin-bottom: 40px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .logs-icon {
+          font-size: 18px;
         }
 
         .logs-command {
           font-family: 'JetBrains Mono', monospace;
-          font-size: 1rem;
+          font-size: 18px;
           color: #a78bfa;
           letter-spacing: 0.01em;
+          white-space: nowrap;
+        }
+
+        .logs-rule {
+          flex: 1;
+          height: 1px;
+          background: var(--border, #1e293b);
         }
 
         .logs-live-badge {
@@ -178,14 +179,12 @@ export default function Logs() {
           50% { opacity: 0.4; transform: scale(0.85); }
         }
 
-        /* Viewport clips the scrolling track */
         .logs-viewport {
           height: 380px;
           overflow: hidden;
           position: relative;
         }
 
-        /* Fade out top and bottom edges for a clean ticker feel */
         .logs-viewport::before,
         .logs-viewport::after {
           content: '';
@@ -207,11 +206,8 @@ export default function Logs() {
           background: linear-gradient(to top, var(--bg-card, #1a1a2e), transparent);
         }
 
-        .logs-track {
-          will-change: transform;
-        }
+        .logs-track { will-change: transform; }
 
-        /* Individual commit row */
         .commit-row {
           display: flex;
           align-items: flex-start;
@@ -222,9 +218,7 @@ export default function Logs() {
           transition: background 0.15s ease;
         }
 
-        .commit-row:hover {
-          background: rgba(167, 139, 250, 0.06);
-        }
+        .commit-row:hover { background: rgba(167, 139, 250, 0.06); }
 
         .commit-arrow {
           font-family: 'JetBrains Mono', monospace;
@@ -290,7 +284,7 @@ export default function Logs() {
           color: #64748b;
         }
 
-        .logs-error { color: #f87171; }
+        .logs-error { color: #fbbf24; }
 
         .logs-prompt {
           padding: 0.75rem 1rem 0.25rem;

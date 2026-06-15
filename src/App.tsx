@@ -17,7 +17,7 @@ function App() {
   return (
     <div style={{ width: '100%', background: 'var(--bg-primary)' }}>
       <Navbar />
-      <main style={{ paddingTop: '44px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <main style={{ paddingTop: '56px', display: 'flex', flexDirection: 'column' }}>
         <WhoAmI />
         <Architecture />
         <Deployments />

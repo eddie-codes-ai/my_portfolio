@@ -21,6 +21,6 @@ export const profile: Profile = {
   },
   stats: [
     { label: 'uptime', value: '2+ years' },
-    { label: 'projects shipped', value: '2+ production' },
+    { label: 'projects shipped', value: '10+ production' },
   ],
 };

@@ -41,7 +41,7 @@ function SkillBar({ skill }: SkillBarProps) {
         background: 'var(--bg-card)',
         border: '1px solid var(--border)',
         borderRadius: 'var(--radius-md)',
-        padding: '14px 18px',
+        padding: '20px 24px',
       }}
     >
       <div
@@ -49,14 +49,14 @@ function SkillBar({ skill }: SkillBarProps) {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '10px',
+          marginBottom: '14px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '16px' }}>{skill.icon}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ fontSize: '20px' }}>{skill.icon}</span>
           <span
             style={{
-              fontSize: '13px',
+              fontSize: '16px',
               color: 'var(--text-primary)',
               fontFamily: 'var(--font-mono)',
             }}
@@ -66,10 +66,10 @@ function SkillBar({ skill }: SkillBarProps) {
         </div>
         <span
           style={{
-            fontSize: '13px',
+            fontSize: '15px',
             color,
             fontFamily: 'var(--font-mono)',
-            fontWeight: 500,
+            fontWeight: 600,
           }}
         >
           {skill.percentage}%
@@ -77,7 +77,7 @@ function SkillBar({ skill }: SkillBarProps) {
       </div>
       <div
         style={{
-          height: '3px',
+          height: '4px',
           background: 'var(--border)',
           borderRadius: '2px',
           overflow: 'hidden',

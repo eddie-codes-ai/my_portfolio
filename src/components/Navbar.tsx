@@ -57,33 +57,36 @@ function Navbar() {
         left: 0,
         right: 0,
         zIndex: 100,
-        background: 'rgba(10, 14, 19, 0.85)',
+        background: 'rgba(10, 14, 19, 0.92)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--border)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 24px',
-        height: '44px',
+        padding: '0 32px',
+        height: '64px',
         fontFamily: 'var(--font-mono)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {/* Brand */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <span
           style={{
-            width: '8px',
-            height: '8px',
+            width: '10px',
+            height: '10px',
             borderRadius: '50%',
             background: 'var(--accent)',
             display: 'block',
+            boxShadow: '0 0 6px var(--accent)',
           }}
         />
-        <span style={{ fontSize: '14px', color: 'var(--accent)', fontWeight: 500 }}>
+        <span style={{ fontSize: '18px', color: 'var(--accent)', fontWeight: 600 }}>
           edwin.mwai://os
         </span>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
+      {/* Nav links */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
         {navLinks.map((link) => {
           const id = link.href.replace('#', '');
           const isActive = activeSection === id;
@@ -93,20 +96,22 @@ function Navbar() {
               href={link.href}
               onClick={(e) => handleNav(e, link.href)}
               style={{
-                fontSize: '15px',
+                fontSize: '14px',
                 color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
                 textDecoration: 'none',
                 transition: 'color var(--transition)',
                 fontFamily: 'var(--font-mono)',
+                paddingBottom: '2px',
+                borderBottom: isActive ? '1px solid var(--accent)' : '1px solid transparent',
               }}
-              onMouseEnter={(e) =>
-                ((e.target as HTMLAnchorElement).style.color = 'var(--text-primary)')
-              }
-              onMouseLeave={(e) =>
-                ((e.target as HTMLAnchorElement).style.color = isActive
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-primary)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = isActive
                   ? 'var(--accent)'
-                  : 'var(--text-secondary)')
-              }
+                  : 'var(--text-secondary)';
+              }}
             >
               {link.label}
             </a>
@@ -114,10 +119,32 @@ function Navbar() {
         })}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>TLS</span>
-        <span style={{ fontSize: '11px', color: 'var(--green)' }}>● 100%</span>
-        <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>⏱ {time}</span>
+      {/* Right side status */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <span style={{ fontSize: '15px', color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>TLS</span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+            <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+            <circle cx="12" cy="20" r="1" fill="var(--green)" />
+          </svg>
+          <span style={{ fontSize: '15px', color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>100%</span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span style={{ fontSize: '15px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>{time}</span>
+        </div>
       </div>
     </nav>
   );

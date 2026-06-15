@@ -17,10 +17,10 @@ function ProjectCard({ project }: ProjectCardProps) {
         background: 'var(--bg-card)',
         border: '1px solid var(--border)',
         borderRadius: 'var(--radius-lg)',
-        padding: '20px',
+        padding: '28px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px',
+        gap: '16px',
         transition: 'border-color var(--transition), background var(--transition)',
         cursor: 'default',
       }}
@@ -34,11 +34,11 @@ function ProjectCard({ project }: ProjectCardProps) {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
             style={{
-              width: '8px',
-              height: '8px',
+              width: '10px',
+              height: '10px',
               borderRadius: '50%',
               background: statusColors[project.status],
               display: 'block',
@@ -48,8 +48,8 @@ function ProjectCard({ project }: ProjectCardProps) {
           />
           <span
             style={{
-              fontSize: '14px',
-              fontWeight: 500,
+              fontSize: '17px',
+              fontWeight: 600,
               color: 'var(--text-primary)',
               fontFamily: 'var(--font-mono)',
             }}
@@ -64,11 +64,12 @@ function ProjectCard({ project }: ProjectCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontSize: '11px',
+                fontSize: '12px',
                 color: 'var(--text-secondary)',
                 border: '1px solid var(--border)',
                 borderRadius: 'var(--radius-sm)',
-                padding: '2px 8px',
+                padding: '4px 10px',
+                fontFamily: 'var(--font-mono)',
               }}
             >
               github
@@ -80,11 +81,12 @@ function ProjectCard({ project }: ProjectCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontSize: '11px',
+                fontSize: '12px',
                 color: 'var(--accent)',
                 border: '1px solid var(--border-accent)',
                 borderRadius: 'var(--radius-sm)',
-                padding: '2px 8px',
+                padding: '4px 10px',
+                fontFamily: 'var(--font-mono)',
               }}
             >
               live ↗
@@ -95,26 +97,27 @@ function ProjectCard({ project }: ProjectCardProps) {
 
       <p
         style={{
-          fontSize: '13px',
+          fontSize: '15px',
           color: 'var(--text-secondary)',
-          lineHeight: '1.6',
+          lineHeight: '1.75',
           fontFamily: 'var(--font-mono)',
+          margin: 0,
         }}
       >
         {project.description}
       </p>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
         {project.techStack.map((tech) => (
           <span
             key={tech}
             style={{
-              fontSize: '11px',
+              fontSize: '13px',
               color: 'var(--text-secondary)',
               background: 'var(--bg-secondary)',
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius-sm)',
-              padding: '2px 8px',
+              padding: '4px 12px',
               fontFamily: 'var(--font-mono)',
             }}
           >
