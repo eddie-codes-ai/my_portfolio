@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ProjectCard from '../ui/ProjectCard';
 import { projects } from '../../data/projects';
 import type { Project } from '../../types';
+import { useTypewriter } from '../../hooks/useTypewriter';
 
 type Filter = 'all' | Project['type'];
 
@@ -16,25 +17,17 @@ const filters: { label: string; value: Filter }[] = [
 function Deployments() {
   const [active, setActive] = useState<Filter>('all');
   const filtered = active === 'all' ? projects : projects.filter((p) => p.type === active);
+  const { displayed, done, cursorChar } = useTypewriter('$ ls production-projects/', { speed: 50, delay: 300 });
 
   return (
-    <section
-      id="deployments"
-      style={{
-        minHeight: '100vh',
-        padding: '80px 40px',
-        width: '100%',
-        boxSizing: 'border-box',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <section id="deployments" style={{ minHeight: '100vh', padding: '80px 40px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ width: '100%', maxWidth: '1560px', marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ color: 'var(--accent)', fontSize: '18px' }}>🔀</span>
-        <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '18px' }}>$ ls production-projects/</span>
-        <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+        <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '18px' }}>
+          {displayed}
+          {!done && <span style={{ animation: 'blink-cur 1s step-end infinite' }}>{cursorChar}</span>}
+        </span>
+        {done && <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />}
       </div>
 
       <div style={{ width: '100%', maxWidth: '1560px', display: 'flex', gap: '12px', marginBottom: '32px', flexWrap: 'wrap' }}>
@@ -54,6 +47,13 @@ function Deployments() {
           no projects found in this category.
         </div>
       )}
+
+      <style>{`
+        @keyframes blink-cur {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
     </section>
   );
 }
