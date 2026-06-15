@@ -1,59 +1,336 @@
-const timeline = [
-  { id: '1', year: '2025', title: 'Smart Personal Finance Tracker', organization: 'JKUAT — Final Year Project', description: 'Designed and developed a mobile-first financial management system for Kenyan university students with a Flutter frontend, Python Flask API, and an expert system for financial health scoring.', type: 'project' },
-  { id: '2', year: '2024', title: 'Luxe Nails Parlour Platform', organization: 'Freelance', description: 'Built a full-stack business platform for a nail salon — public booking system with M-Pesa payments, admin dashboard, and full CI/CD deployment on Vercel.', type: 'freelance' },
-  { id: '3', year: '2022–2026', title: 'BSc. Information Technology', organization: 'Jomo Kenyatta University of Agriculture and Technology', description: 'Studied software engineering, databases, networking, and system design. Built multiple projects across web, mobile, and backend domains.', type: 'education' },
-];
+import { useEffect, useRef } from "react";
+import { useGitHubCommits } from "../../hooks/useGitHubCommits";
+import type { GitHubCommit } from "../../hooks/useGitHubCommits";
+import TerminalCard from "../ui/TerminalCard";
 
-const typeColors: Record<string, string> = {
-  project: 'var(--accent)',
-  freelance: 'var(--green)',
-  education: 'var(--yellow)',
-};
-
-function Logs() {
+function CommitRow({ commit, timeAgo }: { commit: GitHubCommit; timeAgo: (ts: string) => string }) {
   return (
-    <section
-      id="logs"
-      style={{
-        minHeight: '100vh',
-        padding: '80px 80px',
-        width: '100%',
-        maxWidth: '1400px',
-        margin: '0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-      }}
+    <a
+      href={commit.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="commit-row"
     >
-      <div style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span style={{ color: 'var(--accent)', fontSize: '16px' }}>📋</span>
-        <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '15px' }}>$ cat logs/activity</span>
-        <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
-      </div>
-
-      <div style={{ position: 'relative', paddingLeft: '24px' }}>
-        <div style={{ position: 'absolute', left: '7px', top: '8px', bottom: '8px', width: '1px', background: 'var(--border)' }} />
-        {timeline.map((entry) => (
-          <div key={entry.id} style={{ position: 'relative', marginBottom: '24px', paddingLeft: '28px' }}>
-            <div style={{ position: 'absolute', left: '-17px', top: '20px', width: '10px', height: '10px', borderRadius: '50%', background: typeColors[entry.type], border: '2px solid var(--bg-primary)' }} />
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
-                <div>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{entry.title}</div>
-                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>{entry.organization}</div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontSize: '12px', color: typeColors[entry.type], border: `1px solid ${typeColors[entry.type]}40`, borderRadius: 'var(--radius-sm)', padding: '3px 10px', fontFamily: 'var(--font-mono)' }}>{entry.type}</span>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{entry.year}</span>
-                </div>
-              </div>
-              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.7', fontFamily: 'var(--font-mono)' }}>{entry.description}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
+      <span className="commit-arrow">-&gt;</span>
+      <span className="commit-body">
+        <span className="commit-message">{commit.message}</span>
+        <span className="commit-meta">
+          <span className="commit-repo">{commit.repo}</span>
+          <span className="commit-sha">{commit.sha}</span>
+        </span>
+      </span>
+      <span className="commit-time">{timeAgo(commit.timestamp)}</span>
+    </a>
   );
 }
 
-export default Logs;
+export default function Logs() {
+  const { commits, loading, error, lastUpdated, timeAgo } = useGitHubCommits();
+  const trackRef = useRef<HTMLDivElement>(null);
+  const animRef = useRef<number | null>(null);
+  const posRef = useRef(0);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || commits.length === 0) return;
+
+    // Cancel any previous animation
+    if (animRef.current) cancelAnimationFrame(animRef.current);
+    posRef.current = 0;
+
+    const speed = 1.0; // px per frame — lower = slower
+
+    function animate() {
+      if (!track) return;
+      posRef.current += speed;
+
+      // Height of one set (half the total since we duplicated)
+      const halfHeight = track.scrollHeight / 2;
+      if (posRef.current >= halfHeight) {
+        posRef.current = 0;
+      }
+
+      track.style.transform = `translateY(-${posRef.current}px)`;
+      animRef.current = requestAnimationFrame(animate);
+    }
+
+    animRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+    };
+  }, [commits]);
+
+  // Pause on hover
+  function pauseScroll() {
+    if (animRef.current) cancelAnimationFrame(animRef.current);
+  }
+
+  function resumeScroll() {
+    if (!trackRef.current || commits.length === 0) return;
+    const track = trackRef.current;
+    const speed = 0.4;
+    function animate() {
+      posRef.current += speed;
+      const halfHeight = track.scrollHeight / 2;
+      if (posRef.current >= halfHeight) posRef.current = 0;
+      track.style.transform = `translateY(-${posRef.current}px)`;
+      animRef.current = requestAnimationFrame(animate);
+    }
+    animRef.current = requestAnimationFrame(animate);
+  }
+
+  const doubled = [...commits, ...commits];
+
+  return (
+    <section className="logs-section" id="logs">
+      <div className="logs-header">
+        <span className="logs-command">$ tail -f logs/activity.log</span>
+      </div>
+
+      <TerminalCard title="activity.log — streaming" showDots>
+        <div className="logs-live-badge">
+          <span className="logs-live-dot" />
+          <span className="logs-live-text">LIVE</span>
+        </div>
+
+        <div
+          className="logs-viewport"
+          onMouseEnter={pauseScroll}
+          onMouseLeave={resumeScroll}
+        >
+          {loading && (
+            <div className="logs-state">fetching commits...</div>
+          )}
+          {error && !loading && (
+            <div className="logs-state logs-error">! {error}</div>
+          )}
+          {!loading && !error && commits.length === 0 && (
+            <div className="logs-state">no recent commits found</div>
+          )}
+
+          {!loading && !error && commits.length > 0 && (
+            <div className="logs-track" ref={trackRef}>
+              {doubled.map((commit, i) => (
+                <CommitRow key={`${commit.id}-${i}`} commit={commit} timeAgo={timeAgo} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="logs-prompt">
+          <span>$ </span>
+          <span className="logs-cursor-blink" />
+        </div>
+      </TerminalCard>
+
+      {lastUpdated && (
+        <p className="logs-updated">
+          last synced {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        </p>
+      )}
+
+      <style>{`
+        .logs-section {
+          padding: 4rem 2rem;
+          max-width: 860px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        .logs-header {
+          margin-bottom: 1.25rem;
+        }
+
+        .logs-command {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 1rem;
+          color: #a78bfa;
+          letter-spacing: 0.01em;
+        }
+
+        .logs-live-badge {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          position: absolute;
+          top: 0.6rem;
+          right: 1rem;
+          z-index: 1;
+        }
+
+        .logs-live-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #4ade80;
+          animation: pulse-dot 1.6s ease-in-out infinite;
+        }
+
+        .logs-live-text {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.75rem;
+          color: #4ade80;
+          letter-spacing: 0.08em;
+        }
+
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Viewport clips the scrolling track */
+        .logs-viewport {
+          height: 380px;
+          overflow: hidden;
+          position: relative;
+        }
+
+        /* Fade out top and bottom edges for a clean ticker feel */
+        .logs-viewport::before,
+        .logs-viewport::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          height: 48px;
+          z-index: 2;
+          pointer-events: none;
+        }
+
+        .logs-viewport::before {
+          top: 0;
+          background: linear-gradient(to bottom, var(--bg-card, #1a1a2e), transparent);
+        }
+
+        .logs-viewport::after {
+          bottom: 0;
+          background: linear-gradient(to top, var(--bg-card, #1a1a2e), transparent);
+        }
+
+        .logs-track {
+          will-change: transform;
+        }
+
+        /* Individual commit row */
+        .commit-row {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+          padding: 0.9rem 1rem;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+          text-decoration: none;
+          transition: background 0.15s ease;
+        }
+
+        .commit-row:hover {
+          background: rgba(167, 139, 250, 0.06);
+        }
+
+        .commit-arrow {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.85rem;
+          color: #a78bfa;
+          margin-top: 0.1rem;
+          flex-shrink: 0;
+          opacity: 0.8;
+        }
+
+        .commit-body {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          min-width: 0;
+        }
+
+        .commit-message {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.95rem;
+          color: #e2e8f0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: 500;
+        }
+
+        .commit-meta {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .commit-repo {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.78rem;
+          color: #64748b;
+        }
+
+        .commit-sha {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.72rem;
+          color: #475569;
+          background: rgba(255,255,255,0.04);
+          padding: 0.1rem 0.4rem;
+          border-radius: 3px;
+          border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .commit-time {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.78rem;
+          color: #64748b;
+          flex-shrink: 0;
+          margin-top: 0.1rem;
+        }
+
+        .logs-state {
+          padding: 1.5rem 1rem;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.875rem;
+          color: #64748b;
+        }
+
+        .logs-error { color: #f87171; }
+
+        .logs-prompt {
+          padding: 0.75rem 1rem 0.25rem;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.875rem;
+          color: #a78bfa;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+
+        .logs-cursor-blink {
+          display: inline-block;
+          width: 9px;
+          height: 1.1em;
+          background: #a78bfa;
+          opacity: 0.9;
+          animation: blink 1.1s step-end infinite;
+          vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+          0%, 100% { opacity: 0.9; }
+          50% { opacity: 0; }
+        }
+
+        .logs-updated {
+          margin-top: 0.75rem;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.72rem;
+          color: #475569;
+          text-align: right;
+        }
+
+        @media (max-width: 600px) {
+          .logs-section { padding: 2.5rem 1rem; }
+          .commit-message { font-size: 0.85rem; }
+          .logs-viewport { height: 300px; }
+        }
+      `}</style>
+    </section>
+  );
+}

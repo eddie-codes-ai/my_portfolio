@@ -18,6 +18,7 @@ function TerminalCard({
   return (
     <div
       style={{
+        position: 'relative',
         background: 'var(--bg-card)',
         border: `1px solid ${accentBorder ? 'var(--border-accent)' : 'var(--border)'}`,
         borderRadius: 'var(--radius-lg)',
