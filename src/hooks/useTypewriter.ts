@@ -1,43 +1,63 @@
 import { useState, useEffect, useRef } from 'react';
 
 interface UseTypewriterOptions {
-  speed?: number;       // ms per character
-  delay?: number;       // ms before starting
-  cursor?: boolean;     // show blinking cursor while typing
+  speed?: number;
+  delay?: number;
+  triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
 export function useTypewriter(
   text: string,
   options: UseTypewriterOptions = {}
 ) {
-  const { speed = 45, delay = 200, cursor = true } = options;
+  const { speed = 45, delay = 200, triggerRef } = options;
   const [displayed, setDisplayed] = useState('');
   const [done, setDone] = useState(false);
-  const indexRef = useRef(0);
   const started = useRef(false);
 
-  useEffect(() => {
+  function startTyping() {
     if (started.current) return;
     started.current = true;
 
+    let index = 0;
     const startTimeout = setTimeout(() => {
       const interval = setInterval(() => {
-        indexRef.current += 1;
-        setDisplayed(text.slice(0, indexRef.current));
-        if (indexRef.current >= text.length) {
+        index += 1;
+        setDisplayed(text.slice(0, index));
+        if (index >= text.length) {
           clearInterval(interval);
           setDone(true);
         }
       }, speed);
-
-      return () => clearInterval(interval);
     }, delay);
 
     return () => clearTimeout(startTimeout);
-  }, [text, speed, delay]);
+  }
 
-  // Blinking cursor character — visible while typing, stays after done
-  const cursorChar = cursor ? (done ? '▊' : '▊') : '';
+  useEffect(() => {
+    // If no triggerRef provided, start immediately
+    if (!triggerRef) {
+      startTyping();
+      return;
+    }
 
-  return { displayed, done, cursorChar };
+    // Otherwise wait until element is visible
+    const el = triggerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          startTyping();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return { displayed, done };
 }

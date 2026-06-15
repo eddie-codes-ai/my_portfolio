@@ -21,8 +21,9 @@ function CommitRow({ commit, timeAgo }: { commit: GitHubCommit; timeAgo: (ts: st
 }
 
 export default function Logs() {
+  const sectionRef = useRef<HTMLElement>(null);
   const { commits, loading, error, lastUpdated, timeAgo } = useGitHubCommits();
-  const { displayed, done, cursorChar } = useTypewriter('$ tail -f logs/activity.log', { speed: 50, delay: 300 });
+  const { displayed, done } = useTypewriter('$ tail -f logs/activity.log', { speed: 50, delay: 200, triggerRef: sectionRef });
   const trackRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<number | null>(null);
   const posRef = useRef(0);
@@ -64,13 +65,13 @@ export default function Logs() {
   const doubled = [...commits, ...commits];
 
   return (
-    <section className="logs-section" id="logs">
+    <section ref={sectionRef} className="logs-section" id="logs">
       <div className="logs-inner">
         <div className="logs-header">
           <span className="logs-icon">📋</span>
           <span className="logs-command">
             {displayed}
-            {!done && <span style={{ animation: 'blink-cur 1s step-end infinite' }}>{cursorChar}</span>}
+            {!done && <span style={{ animation: 'blink-cur 1s step-end infinite' }}>▊</span>}
           </span>
           {done && <div className="logs-rule" />}
         </div>

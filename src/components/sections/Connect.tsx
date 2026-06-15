@@ -10,11 +10,12 @@ interface FormState { from_name: string; from_email: string; message: string; }
 
 function Connect() {
   const formRef = useRef<HTMLFormElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [form, setForm] = useState<FormState>({ from_name: '', from_email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { displayed, done, cursorChar } = useTypewriter('$ connect.secure()', { speed: 55, delay: 300 });
+  const { displayed, done } = useTypewriter('$ connect.secure()', { speed: 55, delay: 200, triggerRef: sectionRef });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -38,12 +39,11 @@ function Connect() {
   const labelStyle: React.CSSProperties = { fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '8px', display: 'block' };
 
   return (
-    <section id="connect" style={{ minHeight: '100vh', padding: '80px 40px 120px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    <section ref={sectionRef} id="connect" style={{ minHeight: '100vh', padding: '80px 40px 120px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ width: '100%', maxWidth: '1560px', marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ color: 'var(--accent)', fontSize: '18px' }}>🔒</span>
         <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '18px' }}>
-          {displayed}
-          {!done && <span style={{ animation: 'blink-cur 1s step-end infinite' }}>{cursorChar}</span>}
+          {displayed}{!done && <span style={{ animation: 'blink-cur 1s step-end infinite' }}>▊</span>}
         </span>
         {done && <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />}
       </div>
@@ -102,10 +102,7 @@ function Connect() {
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--accent)' }}>© 2026 Edwin Mwai — All systems operational.</p>
         </div>
       </div>
-
-      <style>{`
-        @keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-      `}</style>
+      <style>{`@keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
     </section>
   );
 }

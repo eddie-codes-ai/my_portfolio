@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import SkillBar from '../ui/SkillBar';
 import { skills } from '../../data/skills';
 import { useTypewriter } from '../../hooks/useTypewriter';
@@ -9,15 +10,15 @@ const stats = [
 ];
 
 function Architecture() {
-  const { displayed, done, cursorChar } = useTypewriter('$ system.architecture()', { speed: 50, delay: 300 });
+  const sectionRef = useRef<HTMLElement>(null);
+  const { displayed, done } = useTypewriter('$ system.architecture()', { speed: 50, delay: 200, triggerRef: sectionRef });
 
   return (
-    <section id="architecture" style={{ minHeight: '100vh', padding: '80px 40px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    <section ref={sectionRef} id="architecture" style={{ minHeight: '100vh', padding: '80px 40px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ width: '100%', maxWidth: '1560px', marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ color: 'var(--accent)', fontSize: '18px' }}>🗂</span>
         <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '18px' }}>
-          {displayed}
-          {!done && <span style={{ animation: 'blink-cur 1s step-end infinite' }}>{cursorChar}</span>}
+          {displayed}{!done && <span style={{ animation: 'blink-cur 1s step-end infinite' }}>▊</span>}
         </span>
         {done && <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />}
       </div>
@@ -38,13 +39,7 @@ function Architecture() {
           ))}
         </div>
       </div>
-
-      <style>{`
-        @keyframes blink-cur {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-      `}</style>
+      <style>{`@keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
     </section>
   );
 }
