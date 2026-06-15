@@ -72,7 +72,7 @@ function WhoAmI() {
           </TerminalCard>
         </div>
 
-        <div style={{ width: '520px', flexShrink: 0 }}>
+        <div style={{ width: '980px', flexShrink: 0 }}>
           <TerminalCard title="philosophy.md" showDots>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {profile.philosophy.paragraphs.map((para, i) => (
