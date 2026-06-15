@@ -1,11 +1,22 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 
-interface FormState { name: string; email: string; message: string; }
+const SERVICE_ID = 'service_j4paahd';
+const TEMPLATE_ID = 'template_aw7idi5';
+const PUBLIC_KEY = 'pT0zBHd4G2r7a0D_H';
+
+interface FormState {
+  from_name: string;
+  from_email: string;
+  message: string;
+}
 
 function Connect() {
-  const [form, setForm] = useState<FormState>({ name: '', email: '', message: '' });
+  const formRef = useRef<HTMLFormElement>(null);
+  const [form, setForm] = useState<FormState>({ from_name: '', from_email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -14,13 +25,38 @@ function Connect() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((res) => setTimeout(res, 1200));
-    setLoading(false);
-    setSubmitted(true);
+    setError('');
+
+    try {
+      await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current!, PUBLIC_KEY);
+      setSubmitted(true);
+    } catch {
+      setError('$ Error: transmission failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const inputStyle: React.CSSProperties = { width: '100%', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '12px 14px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', fontSize: '14px', outline: 'none', transition: 'border-color var(--transition)' };
-  const labelStyle: React.CSSProperties = { fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '6px', display: 'block' };
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    background: 'var(--bg-secondary)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-md)',
+    padding: '12px 14px',
+    color: 'var(--text-primary)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '14px',
+    outline: 'none',
+    transition: 'border-color var(--transition)',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: '12px',
+    color: 'var(--text-muted)',
+    fontFamily: 'var(--font-mono)',
+    marginBottom: '6px',
+    display: 'block',
+  };
 
   return (
     <section
@@ -38,7 +74,9 @@ function Connect() {
     >
       <div style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ color: 'var(--accent)', fontSize: '16px' }}>🔒</span>
-        <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '15px' }}>$ connect.secure()</span>
+        <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '15px' }}>
+          $ connect.secure()
+        </span>
         <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
       </div>
 
@@ -49,7 +87,9 @@ function Connect() {
               <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--red)', display: 'block' }} />
               <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--yellow)', display: 'block' }} />
               <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--green)', display: 'block' }} />
-              <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginLeft: '8px' }}>secure_channel.sh</span>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', marginLeft: '8px' }}>
+                secure_channel.sh
+              </span>
             </div>
             <span style={{ fontSize: '12px', color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>● ENCRYPTED</span>
           </div>
@@ -58,26 +98,87 @@ function Connect() {
             {!submitted ? (
               <>
                 <div style={{ marginBottom: '24px' }}>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '6px' }}>$ Establishing secure connection...</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--text-secondary)' }}>$ Channel ready. Transmit your message below.</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                    $ Establishing secure connection...
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                    $ Channel ready. Transmit your message below.
+                  </div>
                 </div>
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+
+                <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     <div>
                       <label style={labelStyle}>👤 identifier</label>
-                      <input type="text" name="name" placeholder="Your name" value={form.name} onChange={handleChange} required style={inputStyle} onFocus={(e) => (e.target.style.borderColor = 'var(--border-accent)')} onBlur={(e) => (e.target.style.borderColor = 'var(--border)')} />
+                      <input
+                        type="text"
+                        name="from_name"
+                        placeholder="Your name"
+                        value={form.from_name}
+                        onChange={handleChange}
+                        required
+                        style={inputStyle}
+                        onFocus={(e) => (e.target.style.borderColor = 'var(--border-accent)')}
+                        onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
+                      />
                     </div>
                     <div>
                       <label style={labelStyle}>✉️ return_address</label>
-                      <input type="email" name="email" placeholder="your@email.com" value={form.email} onChange={handleChange} required style={inputStyle} onFocus={(e) => (e.target.style.borderColor = 'var(--border-accent)')} onBlur={(e) => (e.target.style.borderColor = 'var(--border)')} />
+                      <input
+                        type="email"
+                        name="from_email"
+                        placeholder="your@email.com"
+                        value={form.from_email}
+                        onChange={handleChange}
+                        required
+                        style={inputStyle}
+                        onFocus={(e) => (e.target.style.borderColor = 'var(--border-accent)')}
+                        onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
+                      />
                     </div>
                   </div>
+
                   <div>
                     <label style={labelStyle}>💬 payload</label>
-                    <textarea name="message" placeholder="Your message..." value={form.message} onChange={handleChange} required rows={5} style={{ ...inputStyle, resize: 'vertical' }} onFocus={(e) => (e.target.style.borderColor = 'var(--border-accent)')} onBlur={(e) => (e.target.style.borderColor = 'var(--border)')} />
-                    <div style={{ textAlign: 'right', fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>{form.message.length}/1000</div>
+                    <textarea
+                      name="message"
+                      placeholder="Your message..."
+                      value={form.message}
+                      onChange={handleChange}
+                      required
+                      rows={5}
+                      style={{ ...inputStyle, resize: 'vertical' }}
+                      onFocus={(e) => (e.target.style.borderColor = 'var(--border-accent)')}
+                      onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
+                    />
+                    <div style={{ textAlign: 'right', fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>
+                      {form.message.length}/1000
+                    </div>
                   </div>
-                  <button type="submit" disabled={loading} style={{ alignSelf: 'flex-start', background: loading ? 'var(--accent-glow)' : 'var(--accent)', color: loading ? 'var(--accent)' : '#0a0e13', border: 'none', borderRadius: 'var(--radius-md)', padding: '12px 28px', fontFamily: 'var(--font-mono)', fontSize: '14px', fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', transition: 'all var(--transition)' }}>
+
+                  {error && (
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--red)' }}>
+                      {error}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      alignSelf: 'flex-start',
+                      background: loading ? 'var(--accent-glow)' : 'var(--accent)',
+                      color: loading ? 'var(--accent)' : '#0a0e13',
+                      border: 'none',
+                      borderRadius: 'var(--radius-md)',
+                      padding: '12px 28px',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      transition: 'all var(--transition)',
+                    }}
+                  >
                     {loading ? '$ transmitting...' : '$ transmit()'}
                   </button>
                 </form>
@@ -85,16 +186,24 @@ function Connect() {
             ) : (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <div style={{ fontSize: '28px', marginBottom: '16px' }}>✅</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '15px', color: 'var(--green)', marginBottom: '8px' }}>[OK] Message transmitted successfully.</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--text-secondary)' }}>I'll get back to you shortly.</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '15px', color: 'var(--green)', marginBottom: '8px' }}>
+                  [OK] Message transmitted successfully.
+                </div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                  I'll get back to you shortly.
+                </div>
               </div>
             )}
           </div>
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '48px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>Built with precision. Deployed with confidence.</p>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--accent)' }}>© 2026 Edwin Mwai — All systems operational.</p>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>
+            Built with precision. Deployed with confidence.
+          </p>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--accent)' }}>
+            © 2026 Edwin Mwai — All systems operational.
+          </p>
         </div>
       </div>
     </section>
