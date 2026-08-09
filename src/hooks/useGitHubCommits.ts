@@ -39,13 +39,28 @@ interface PushEvent {
 
 // Single request: GitHub's public events feed already contains recent push
 // activity across every repo, so we don't need one call per repo.
-async function fetchAllCommits(): Promise<GitHubCommit[]> {
+//
+// Prefer the /api/github-activity serverless proxy (authenticated, 5000
+// req/hr, edge-cached) and fall back to calling GitHub directly if the
+// proxy isn't available — e.g. running `vite dev` without `vercel dev`.
+async function fetchEvents(): Promise<PushEvent[]> {
+  try {
+    const proxied = await fetch("/api/github-activity");
+    if (proxied.ok) return proxied.json();
+  } catch {
+    // proxy unreachable — fall through to direct call
+  }
+
   const res = await fetch(
     `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=30`,
     { headers: { Accept: "application/vnd.github+json" } }
   );
   if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
-  const events = await res.json();
+  return res.json();
+}
+
+async function fetchAllCommits(): Promise<GitHubCommit[]> {
+  const events = await fetchEvents();
   if (!Array.isArray(events)) return [];
 
   const commits: GitHubCommit[] = [];
