@@ -56,6 +56,21 @@ function ProjectCard({ project }: ProjectCardProps) {
           >
             {project.name}
           </span>
+          {project.source === 'github' && (
+            <span
+              title="Auto-synced from GitHub"
+              style={{
+                fontSize: '11px',
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '2px 8px',
+                fontFamily: 'var(--font-mono)',
+              }}
+            >
+              synced
+            </span>
+          )}
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           {project.github && (

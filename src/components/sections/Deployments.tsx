@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import ProjectCard from '../ui/ProjectCard';
-import { projects } from '../../data/projects';
+import { projects as curatedProjects } from '../../data/projects';
 import type { Project } from '../../types';
 import { useTypewriter } from '../../hooks/useTypewriter';
+import { useGitHubProjects } from '../../hooks/useGitHubProjects';
 
 type Filter = 'all' | Project['type'];
 const filters: { label: string; value: Filter }[] = [
@@ -15,6 +16,9 @@ const filters: { label: string; value: Filter }[] = [
 
 function Deployments() {
   const [active, setActive] = useState<Filter>('all');
+  const curatedIds = useMemo(() => curatedProjects.map((p) => p.id), []);
+  const { projects: autoProjects } = useGitHubProjects(curatedIds);
+  const projects = useMemo(() => [...curatedProjects, ...autoProjects], [autoProjects]);
   const filtered = active === 'all' ? projects : projects.filter((p) => p.type === active);
   const sectionRef = useRef<HTMLElement>(null);
   const { displayed, done } = useTypewriter('$ ls production-projects/', { speed: 50, delay: 200, triggerRef: sectionRef });

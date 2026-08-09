@@ -39,6 +39,8 @@ export interface Project {
   github?: string;
   live?: string;
   year: string;
+  /** 'github' marks a card auto-generated from the live repo list rather than hand-written. */
+  source?: 'github';
 }
 
 export interface TimelineEntry {
