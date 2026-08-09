@@ -10,7 +10,7 @@ export interface GitHubCommit {
 }
 
 const GITHUB_USERNAME = "eddie-codes-ai";
-const POLL_INTERVAL = 60_000;
+const POLL_INTERVAL = 5 * 60_000; // 5 min — GitHub's unauthenticated API allows only 60 req/hr per IP
 const MAX_COMMITS = 20;
 
 function timeAgo(dateStr: string): string {
@@ -25,55 +25,48 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(diff / 604800)}w ago`;
 }
 
-async function fetchRepos(): Promise<string[]> {
+interface PushEventCommit {
+  sha: string;
+  message: string;
+}
+
+interface PushEvent {
+  type: string;
+  repo: { name: string };
+  created_at: string;
+  payload?: { commits?: PushEventCommit[] };
+}
+
+// Single request: GitHub's public events feed already contains recent push
+// activity across every repo, so we don't need one call per repo.
+async function fetchAllCommits(): Promise<GitHubCommit[]> {
   const res = await fetch(
-    `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=10`,
+    `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=30`,
     { headers: { Accept: "application/vnd.github+json" } }
   );
   if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
-  const repos = await res.json();
-  return repos.map((r: { name: string }) => r.name);
-}
+  const events = await res.json();
+  if (!Array.isArray(events)) return [];
 
-async function fetchCommitsForRepo(repo: string): Promise<GitHubCommit[]> {
-  const res = await fetch(
-    `https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/commits?per_page=5`,
-    { headers: { Accept: "application/vnd.github+json" } }
-  );
-  if (!res.ok) return [];
-  const commits = await res.json();
-  if (!Array.isArray(commits)) return [];
+  const commits: GitHubCommit[] = [];
+  for (const event of events as PushEvent[]) {
+    if (event.type !== "PushEvent" || !event.payload?.commits) continue;
+    const repo = event.repo.name.split("/").pop() ?? event.repo.name;
+    for (const c of event.payload.commits) {
+      commits.push({
+        id: c.sha,
+        sha: c.sha.slice(0, 7),
+        message: c.message.split("\n")[0],
+        repo,
+        timestamp: event.created_at,
+        url: `https://github.com/${event.repo.name}/commit/${c.sha}`,
+      });
+    }
+  }
 
-  return commits.map((c: {
-    sha: string;
-    commit: { message: string; author: { date: string } };
-    html_url: string;
-  }) => ({
-    id: c.sha,
-    sha: c.sha.slice(0, 7),
-    message: c.commit.message.split("\n")[0],
-    repo,
-    timestamp: c.commit.author.date,
-    url: c.html_url,
-  }));
-}
-
-async function fetchAllCommits(): Promise<GitHubCommit[]> {
-  const repos = await fetchRepos();
-
-  const results = await Promise.all(
-    repos.map((repo) => fetchCommitsForRepo(repo))
-  );
-
-  const all = results
-    .flat()
-    .sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    )
+  return commits
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, MAX_COMMITS);
-
-  return all;
 }
 
 export function useGitHubCommits() {
@@ -90,6 +83,8 @@ export function useGitHubCommits() {
       setLastUpdated(new Date());
       setError(null);
     } catch (e) {
+      // Keep whatever commits we already have on screen — a transient
+      // rate-limit shouldn't blank out a working feed.
       setError(e instanceof Error ? e.message : "Failed to fetch commits");
     } finally {
       setLoading(false);

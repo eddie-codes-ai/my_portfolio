@@ -82,10 +82,10 @@ export default function Logs() {
             <span className="logs-live-text">LIVE</span>
           </div>
           <div className="logs-viewport" onMouseEnter={pauseScroll} onMouseLeave={resumeScroll}>
-            {loading && <div className="logs-state">fetching commits...</div>}
-            {error && !loading && <div className="logs-state logs-error">! rate limited — commits will load shortly. try refreshing in 60s.</div>}
+            {loading && commits.length === 0 && <div className="logs-state">fetching commits...</div>}
+            {error && commits.length === 0 && !loading && <div className="logs-state logs-error">! rate limited — commits will load shortly. try refreshing in a few minutes.</div>}
             {!loading && !error && commits.length === 0 && <div className="logs-state">no recent commits found</div>}
-            {!loading && !error && commits.length > 0 && (
+            {commits.length > 0 && (
               <div className="logs-track" ref={trackRef}>
                 {doubled.map((commit, i) => <CommitRow key={`${commit.id}-${i}`} commit={commit} timeAgo={timeAgo} />)}
               </div>
