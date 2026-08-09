@@ -47,6 +47,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Cache at Vercel's edge so repeat visits (and page revisits) don't
     // re-hit GitHub at all — keeps us far under any rate limit regardless.
     res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
+    // Non-secret diagnostics: lets us confirm GITHUB_TOKEN is actually being
+    // used (limit 5000) vs falling back to unauthenticated (limit 60)
+    // without ever exposing the token itself.
+    const limit = ghRes.headers.get("x-ratelimit-limit");
+    const remaining = ghRes.headers.get("x-ratelimit-remaining");
+    if (limit) res.setHeader("X-GitHub-RateLimit-Limit", limit);
+    if (remaining) res.setHeader("X-GitHub-RateLimit-Remaining", remaining);
     res.status(200).json(events);
   } catch {
     res.status(500).json({ error: "Failed to fetch GitHub activity" });
