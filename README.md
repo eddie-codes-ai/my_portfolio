@@ -1,73 +1,47 @@
-# React + TypeScript + Vite
+# 🖥️ My Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-black?logo=vercel&logoColor=white)
 
-Currently, two official plugins are available:
+A personal developer portfolio built around a terminal/hacker aesthetic — but the interesting part isn't the visuals, it's that the activity feed and project catalog aren't hand-maintained. They sync live from GitHub through a set of serverless functions, so the site stays current without ever being manually updated.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Highlights
 
-## React Compiler
+- **Live commit activity ticker** — pulls recent commits across every repo through a serverless proxy, authenticated against GitHub and edge-cached, so it stays well under GitHub's rate limits regardless of traffic
+- **Auto-synced project catalog** — pulls each project's description, topics, and tech stack directly from GitHub instead of a hardcoded list; add a repo, write a description, it shows up
+- **Click-to-expand project cards** — fetches and parses each repo's README `## Highlights` section on demand, with a loading state while it fetches
+- **Public and private repos, safely** — a narrowly-scoped (Metadata: read-only) GitHub token surfaces private repos on the card without ever exposing source code or file contents
+- **Terminal/hacker UI** — boot screen animation, scroll-triggered typewriter section headers, ambient glow effects, a laser-scanner aesthetic pass
+- **Contact form via EmailJS** — no backend needed for that piece
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19, TypeScript, Vite 8
+- Vercel Serverless Functions (Node)
+- EmailJS
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Project Structure
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+my_portfolio/
+├── api/                      # Vercel serverless functions
+│   ├── github-activity.ts    # commit feed proxy
+│   ├── github-projects.ts    # repo list proxy
+│   └── github-readme.ts      # README highlights parser
+├── src/
+│   ├── components/
+│   │   ├── sections/         # WhoAmI, Deployments, Logs, Connect...
+│   │   └── ui/                # ProjectCard, TerminalCard, SkillBar...
+│   ├── hooks/                 # useGitHubCommits, useGitHubProjects, useTypewriter...
+│   ├── data/                  # profile, curated project overrides
+│   ├── types/
+│   └── styles/
+└── public/
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+\`\`\`bash
+npm install
+npm run dev
+\`\`\`
