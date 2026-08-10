@@ -3,11 +3,13 @@ import type { Project } from "../types";
 
 const GITHUB_USERNAME = "eddie-codes-ai";
 const POLL_INTERVAL = 10 * 60_000; // repo list changes rarely — 10 min is plenty
-const MAX_AUTO_PROJECTS = 6;
+const MAX_AUTO_PROJECTS = 8;
 
-// Repos we never want surfaced as project cards: the portfolio itself and
-// the special profile-readme repo.
-const EXCLUDED_REPOS = new Set(["my_portfolio", GITHUB_USERNAME.toLowerCase()]);
+// Repos we never want surfaced as project cards — just the special
+// profile-readme repo. The portfolio itself is fair game: it's a real
+// project (live GitHub sync, serverless functions, README parsing) and
+// worth showing alongside everything else.
+const EXCLUDED_REPOS = new Set([GITHUB_USERNAME.toLowerCase()]);
 
 const MOBILE_LANGS = new Set(["dart", "kotlin", "swift", "objective-c"]);
 const BACKEND_LANGS = new Set(["python", "go", "rust", "java", "php", "c#", "ruby", "c++"]);
