@@ -39,7 +39,7 @@ function Deployments() {
           >{f.label}</button>
         ))}
       </div>
-      <div style={{ width: '100%', maxWidth: '1560px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+      <div style={{ width: '100%', maxWidth: '1560px', display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'start', gap: '24px' }}>
         {filtered.map((project) => <ProjectCard key={project.id} project={project} />)}
       </div>
       {filtered.length === 0 && (
