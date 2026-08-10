@@ -16,7 +16,7 @@ const filters: { label: string; value: Filter }[] = [
 
 function Deployments() {
   const [active, setActive] = useState<Filter>('all');
-  const curatedIds = useMemo(() => curatedProjects.map((p) => p.id), []);
+  const curatedIds = useMemo(() => curatedProjects.map((p) => p.repo ?? p.id), []);
   const { projects: autoProjects } = useGitHubProjects(curatedIds);
   const projects = useMemo(() => [...curatedProjects, ...autoProjects], [autoProjects]);
   const filtered = active === 'all' ? projects : projects.filter((p) => p.type === active);

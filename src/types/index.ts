@@ -43,6 +43,8 @@ export interface Project {
   source?: 'github';
   /** True for auto-synced cards backed by a private repo — hides the (inaccessible) github link. */
   private?: boolean;
+  /** Actual GitHub repo slug this curated card corresponds to, if any — used to dedupe against auto-synced cards whose id (derived from the repo name) doesn't match this card's hand-picked id. */
+  repo?: string;
 }
 
 export interface TimelineEntry {

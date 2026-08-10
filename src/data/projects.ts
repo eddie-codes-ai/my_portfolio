@@ -3,6 +3,7 @@ import type { Project } from '../types';
 export const projects: Project[] = [
   {
     id: 'luxe-nails',
+    repo: 'luxe-nails-parlour',
     name: 'Luxe Nails Parlour',
     description:
       'Full-stack business platform for a nail salon — covering the complete product lifecycle from design to deployment. Features a public-facing booking system with M-Pesa payments and a fully managed admin dashboard.',
@@ -25,6 +26,7 @@ export const projects: Project[] = [
   },
   {
     id: 'finance-tracker',
+    repo: 'smart-finance-tracker',
     name: 'Smart Personal Finance Tracker',
     description:
       'Mobile-first financial management system built for Kenyan university students. Addresses the gap left by global apps that don\'t support M-Pesa and cash-based transactions, with an AI-powered expert system for financial health scoring.',
