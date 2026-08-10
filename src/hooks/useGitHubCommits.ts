@@ -10,7 +10,7 @@ export interface GitHubCommit {
 }
 
 const GITHUB_USERNAME = "eddie-codes-ai";
-const POLL_INTERVAL = 5 * 60_000; // 5 min — GitHub's unauthenticated API allows only 60 req/hr per IP
+const POLL_INTERVAL = 5 * 60_000;
 const MAX_COMMITS = 20;
 
 function timeAgo(dateStr: string): string {
@@ -25,61 +25,71 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(diff / 604800)}w ago`;
 }
 
-interface PushEventCommit {
+interface RawCommit {
+  repo: string;
   sha: string;
   message: string;
+  date: string;
+  url: string;
 }
 
-interface PushEvent {
-  type: string;
-  repo: { name: string };
-  created_at: string;
-  payload?: { commits?: PushEventCommit[] };
-}
-
-// Single request: GitHub's public events feed already contains recent push
-// activity across every repo, so we don't need one call per repo.
-//
 // Prefer the /api/github-activity serverless proxy (authenticated, 5000
-// req/hr, edge-cached) and fall back to calling GitHub directly if the
-// proxy isn't available — e.g. running `vite dev` without `vercel dev`.
-async function fetchEvents(): Promise<PushEvent[]> {
+// req/hr, edge-cached, and does the repo-list + per-repo-commits work
+// server-side). Fall back to calling GitHub directly — same repos+commits
+// approach, just unauthenticated — if the proxy isn't reachable, e.g.
+// running `vite dev` without `vercel dev`.
+async function fetchAllCommits(): Promise<GitHubCommit[]> {
   try {
     const proxied = await fetch("/api/github-activity");
-    if (proxied.ok) return proxied.json();
-  } catch {
-    // proxy unreachable — fall through to direct call
-  }
-
-  const res = await fetch(
-    `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=30`,
-    { headers: { Accept: "application/vnd.github+json" } }
-  );
-  if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
-  return res.json();
-}
-
-async function fetchAllCommits(): Promise<GitHubCommit[]> {
-  const events = await fetchEvents();
-  if (!Array.isArray(events)) return [];
-
-  const commits: GitHubCommit[] = [];
-  for (const event of events as PushEvent[]) {
-    if (event.type !== "PushEvent" || !event.payload?.commits) continue;
-    const repo = event.repo.name.split("/").pop() ?? event.repo.name;
-    for (const c of event.payload.commits) {
-      commits.push({
+    if (proxied.ok) {
+      const raw: RawCommit[] = await proxied.json();
+      return raw.map((c) => ({
         id: c.sha,
         sha: c.sha.slice(0, 7),
         message: c.message.split("\n")[0],
-        repo,
-        timestamp: event.created_at,
-        url: `https://github.com/${event.repo.name}/commit/${c.sha}`,
-      });
+        repo: c.repo,
+        timestamp: c.date,
+        url: c.url,
+      }));
     }
+  } catch {
+    // proxy unreachable — fall through to direct calls
   }
 
-  return commits
+  const reposRes = await fetch(
+    `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=8`,
+    { headers: { Accept: "application/vnd.github+json" } }
+  );
+  if (!reposRes.ok) throw new Error(`GitHub API error: ${reposRes.status}`);
+  const repos: { name: string }[] = await reposRes.json();
+
+  const perRepo = await Promise.all(
+    repos.map(async (repo): Promise<GitHubCommit[]> => {
+      const cRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?per_page=5`,
+        { headers: { Accept: "application/vnd.github+json" } }
+      );
+      if (!cRes.ok) return [];
+      const commits = await cRes.json();
+      if (!Array.isArray(commits)) return [];
+
+      return commits.map((c: {
+        sha: string;
+        commit: { message: string; author: { date: string } };
+        html_url: string;
+      }) => ({
+        id: c.sha,
+        sha: c.sha.slice(0, 7),
+        message: c.commit.message.split("\n")[0],
+        repo: repo.name,
+        timestamp: c.commit.author.date,
+        url: c.html_url,
+      }));
+    })
+  );
+
+  return perRepo
+    .flat()
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, MAX_COMMITS);
 }
@@ -99,7 +109,7 @@ export function useGitHubCommits() {
       setError(null);
     } catch (e) {
       // Keep whatever commits we already have on screen — a transient
-      // rate-limit shouldn't blank out a working feed.
+      // failure shouldn't blank out a working feed.
       setError(e instanceof Error ? e.message : "Failed to fetch commits");
     } finally {
       setLoading(false);
