@@ -58,7 +58,7 @@ function toProject(repo: RawRepo): Project {
     year: String(new Date(repo.created_at).getFullYear()),
     techStack: Array.from(
       new Set([repo.language, ...(repo.topics ?? [])].filter((v): v is string => Boolean(v)))
-    ).slice(0, 6),
+    ).slice(0, 10),
     highlights: [],
     // Private repos aren't reachable by visitors — omit the dead link,
     // keep a live/deployed URL if one's set (that's meant to be public).
