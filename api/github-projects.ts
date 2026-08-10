@@ -1,7 +1,16 @@
-// Vercel serverless function. Returns the authenticated user's public,
-// non-fork repos so the Deployments section can auto-list projects that
-// aren't hand-curated in src/data/projects.ts. Same auth/caching strategy
-// as api/github-activity.ts — see that file for details.
+// Vercel serverless function. Returns the account's repos — including
+// private ones, if GITHUB_TOKEN has Metadata: Read-only access to them —
+// so the Deployments section can auto-list projects that aren't hand
+// -curated in src/data/projects.ts. Same auth/caching strategy as
+// api/github-activity.ts — see that file for details.
+//
+// With a token: hits /user/repos (authenticated-owner listing), which
+// includes private repos the token can see. "Metadata: Read-only" is
+// enough for the fields this endpoint returns (name, description,
+// language, topics, homepage, etc.) — no Contents/commit access needed
+// or used here.
+// Without a token: falls back to the public /users/{username}/repos
+// listing, same as before — public repos only.
 
 interface VercelRequest {
   method?: string;
@@ -29,10 +38,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     };
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const ghRes = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/repos?type=owner&sort=pushed&per_page=100`,
-      { headers }
-    );
+    const url = token
+      ? `https://api.github.com/user/repos?type=owner&sort=pushed&per_page=100`
+      : `https://api.github.com/users/${GITHUB_USERNAME}/repos?type=owner&sort=pushed&per_page=100`;
+    const ghRes = await fetch(url, { headers });
 
     if (!ghRes.ok) {
       res.status(ghRes.status).json({ error: `GitHub API error: ${ghRes.status}` });

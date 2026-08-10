@@ -71,6 +71,21 @@ function ProjectCard({ project }: ProjectCardProps) {
               synced
             </span>
           )}
+          {project.private && (
+            <span
+              title="Private repository"
+              style={{
+                fontSize: '11px',
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '2px 8px',
+                fontFamily: 'var(--font-mono)',
+              }}
+            >
+              🔒 private
+            </span>
+          )}
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           {project.github && (

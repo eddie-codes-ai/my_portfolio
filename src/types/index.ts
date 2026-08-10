@@ -41,6 +41,8 @@ export interface Project {
   year: string;
   /** 'github' marks a card auto-generated from the live repo list rather than hand-written. */
   source?: 'github';
+  /** True for auto-synced cards backed by a private repo — hides the (inaccessible) github link. */
+  private?: boolean;
 }
 
 export interface TimelineEntry {

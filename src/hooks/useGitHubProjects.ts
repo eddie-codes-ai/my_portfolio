@@ -60,9 +60,12 @@ function toProject(repo: RawRepo): Project {
       new Set([repo.language, ...(repo.topics ?? [])].filter((v): v is string => Boolean(v)))
     ).slice(0, 6),
     highlights: [],
-    github: repo.html_url,
+    // Private repos aren't reachable by visitors — omit the dead link,
+    // keep a live/deployed URL if one's set (that's meant to be public).
+    github: repo.private ? undefined : repo.html_url,
     live: repo.homepage || undefined,
     source: "github",
+    private: repo.private,
   };
 }
 
@@ -100,7 +103,7 @@ export function useGitHubProjects(excludeIds: string[] = []) {
         if (!Array.isArray(repos)) return;
 
         const mapped = repos
-          .filter((r) => !r.fork && !r.private && !r.archived && r.description)
+          .filter((r) => !r.fork && !r.archived && r.description)
           .filter((r) => !EXCLUDED_REPOS.has(r.name.toLowerCase()))
           .filter((r) => !excluded.has(r.name.toLowerCase()))
           .sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
