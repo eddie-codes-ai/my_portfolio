@@ -12,6 +12,8 @@
 // Environment Variables). A classic PAT with no scopes checked is enough —
 // this only ever reads public data.
 
+import process from "node:process";
+
 interface VercelRequest {
   method?: string;
 }

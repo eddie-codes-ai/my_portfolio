@@ -12,6 +12,8 @@
 // Without a token: falls back to the public /users/{username}/repos
 // listing, same as before — public repos only.
 
+import process from "node:process";
+
 interface VercelRequest {
   method?: string;
 }
