@@ -61,8 +61,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const token = process.env.GITHUB_TOKEN;
+    // Deliberately request the default JSON envelope, not a raw/text
+    // Accept variant — GitHub doesn't reliably honor raw-content
+    // negotiation on this endpoint, and letting fetch's .text() guess the
+    // charset on whatever it decides to send back corrupted non-ASCII
+    // characters (em dashes came back as mojibake). Decoding the
+    // guaranteed-base64 `content` field ourselves is unambiguous.
     const headers: Record<string, string> = {
-      Accept: "application/vnd.github.raw",
+      Accept: "application/vnd.github+json",
       "User-Agent": "my-portfolio-activity-feed",
     };
     if (token) headers.Authorization = `Bearer ${token}`;
@@ -77,7 +83,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    const markdown = await ghRes.text();
+    const data: { content?: string; encoding?: string } = await ghRes.json();
+    if (!data.content || data.encoding !== "base64") {
+      res.status(200).json({ highlights: [] });
+      return;
+    }
+    const markdown = Buffer.from(data.content, "base64").toString("utf-8");
     const highlights = parseHighlights(markdown);
 
     res.setHeader("Cache-Control", "s-maxage=600, stale-while-revalidate=3600");
