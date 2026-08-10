@@ -49,16 +49,27 @@ function inferType(repo: RawRepo): Project["type"] {
 }
 
 function toProject(repo: RawRepo): Project {
+  // Topics are user-curated and take priority; only add the language badge
+  // if it isn't already represented there (GitHub returns e.g. "TypeScript"
+  // for language but topics are always lowercase, e.g. "typescript" — a
+  // plain Set would treat those as different strings and show both).
+  const topics = repo.topics ?? [];
+  const lowerTopics = new Set(topics.map((t) => t.toLowerCase()));
+  const techStack = Array.from(
+    new Set([
+      ...(repo.language && !lowerTopics.has(repo.language.toLowerCase()) ? [repo.language] : []),
+      ...topics,
+    ])
+  ).slice(0, 10);
+
   return {
     id: repo.name.toLowerCase(),
     name: prettify(repo.name),
-    description: repo.description ?? "No description provided.",
+    description: repo.description?.trim() || "No description provided.",
     type: inferType(repo),
     status: repo.archived ? "archived" : "live",
     year: String(new Date(repo.created_at).getFullYear()),
-    techStack: Array.from(
-      new Set([repo.language, ...(repo.topics ?? [])].filter((v): v is string => Boolean(v)))
-    ).slice(0, 10),
+    techStack,
     highlights: [],
     // Private repos aren't reachable by visitors — omit the dead link,
     // keep a live/deployed URL if one's set (that's meant to be public).
