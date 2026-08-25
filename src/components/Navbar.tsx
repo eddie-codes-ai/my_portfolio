@@ -11,6 +11,7 @@ const navLinks = [
 function Navbar() {
   const [time, setTime] = useState('');
   const [activeSection, setActiveSection] = useState('whoami');
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -44,6 +45,7 @@ function Navbar() {
 
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
+    setMobileOpen(false);
     const id = href.replace('#', '');
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -51,6 +53,8 @@ function Navbar() {
 
   return (
     <nav
+      className="navbar"
+      data-open={mobileOpen}
       style={{
         position: 'fixed',
         top: 0,
@@ -78,15 +82,16 @@ function Navbar() {
             background: 'var(--accent)',
             display: 'block',
             boxShadow: '0 0 6px var(--accent)',
+            flexShrink: 0,
           }}
         />
-        <span style={{ fontSize: '18px', color: 'var(--accent)', fontWeight: 600 }}>
+        <span className="navbar-brand-text" style={{ fontSize: '18px', color: 'var(--accent)', fontWeight: 600 }}>
           edwin.mwai://os
         </span>
       </div>
 
       {/* Nav links */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+      <div className={`navbar-links${mobileOpen ? ' open' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
         {navLinks.map((link) => {
           const id = link.href.replace('#', '');
           const isActive = activeSection === id;
@@ -120,7 +125,7 @@ function Navbar() {
       </div>
 
       {/* Right side status */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div className="navbar-status" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -146,6 +151,74 @@ function Navbar() {
           <span style={{ fontSize: '15px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>{time}</span>
         </div>
       </div>
+
+      {/* Mobile hamburger toggle */}
+      <button
+        type="button"
+        className="navbar-toggle"
+        aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={mobileOpen}
+        onClick={() => setMobileOpen((v) => !v)}
+      >
+        <span className="navbar-toggle-bar" />
+        <span className="navbar-toggle-bar" />
+        <span className="navbar-toggle-bar" />
+      </button>
+
+      <style>{`
+        .navbar-toggle {
+          display: none;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+          width: 32px;
+          height: 32px;
+          padding: 0;
+          flex-shrink: 0;
+        }
+        .navbar-toggle-bar {
+          width: 100%;
+          height: 2px;
+          background: var(--text-primary);
+          border-radius: 2px;
+          transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+        .navbar[data-open="true"] .navbar-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .navbar[data-open="true"] .navbar-toggle-bar:nth-child(2) { opacity: 0; }
+        .navbar[data-open="true"] .navbar-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        @media (max-width: 860px) {
+          .navbar { padding: 0 16px !important; }
+          .navbar-links, .navbar-status { display: none !important; }
+          .navbar-toggle { display: flex; }
+
+          .navbar-links.open {
+            display: flex !important;
+            flex-direction: column;
+            align-items: stretch;
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            gap: 4px;
+            padding: 12px 16px 20px;
+            background: rgba(10, 14, 19, 0.98);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+          }
+          .navbar-links.open a {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border) !important;
+            width: 100%;
+            box-sizing: border-box;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .navbar-brand-text { font-size: 15px !important; }
+        }
+      `}</style>
     </nav>
   );
 }

@@ -14,7 +14,7 @@ function Architecture() {
   const { displayed, done } = useTypewriter('$ system.architecture()', { speed: 50, delay: 200, triggerRef: sectionRef });
 
   return (
-    <section ref={sectionRef} id="architecture" style={{ minHeight: '100vh', padding: '80px 40px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    <section ref={sectionRef} id="architecture" className="arch-section" style={{ minHeight: '100vh', padding: '80px 40px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ width: '100%', maxWidth: '1560px', marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ color: 'var(--accent)', fontSize: '18px' }}>🗂</span>
         <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '18px' }}>
@@ -23,13 +23,13 @@ function Architecture() {
         {done && <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />}
       </div>
 
-      <div style={{ width: '100%', maxWidth: '1560px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+      <div style={{ width: '100%', maxWidth: '1560px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', marginBottom: '32px' }}>
         {skills.map((skill) => <SkillBar key={skill.id} skill={skill} />)}
       </div>
 
-      <div style={{ width: '100%', maxWidth: '1560px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '40px' }}>
+      <div className="arch-overview" style={{ width: '100%', maxWidth: '1560px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '40px' }}>
         <div style={{ fontSize: '14px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '28px' }}>~ /system/overview</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '24px' }}>
           {stats.map((stat) => (
             <div key={stat.label} style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', padding: '36px 28px', textAlign: 'center' }}>
               <div style={{ fontSize: '48px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{stat.value}</div>
@@ -39,7 +39,13 @@ function Architecture() {
           ))}
         </div>
       </div>
-      <style>{`@keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
+      <style>{`
+        @keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @media (max-width: 640px) {
+          .arch-section { padding: 56px 20px !important; }
+          .arch-overview { padding: 24px 20px !important; }
+        }
+      `}</style>
     </section>
   );
 }

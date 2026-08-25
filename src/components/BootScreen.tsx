@@ -92,6 +92,7 @@ function BootScreen({ onComplete }: BootScreenProps) {
       >
         {/* Orbit + Padlock container */}
         <div
+          className="boot-orbit-wrap"
           style={{
             position: 'relative',
             width: '320px',
@@ -307,6 +308,12 @@ function BootScreen({ onComplete }: BootScreenProps) {
         @keyframes pulseGlow {
           0%, 100% { opacity: 0.6; transform: scale(1); }
           50% { opacity: 1; transform: scale(1.1); }
+        }
+        @media (max-width: 480px) {
+          .boot-orbit-wrap { transform: scale(0.8); }
+        }
+        @media (max-width: 380px) {
+          .boot-orbit-wrap { transform: scale(0.62); }
         }
       `}</style>
     </div>
