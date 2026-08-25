@@ -67,7 +67,7 @@ function Connect() {
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '15px', color: 'var(--text-secondary)' }}>$ Channel ready. Transmit your message below.</div>
                 </div>
                 <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
+                  <div className="connect-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                     <div>
                       <label style={labelStyle}>👤 identifier</label>
                       <input type="text" name="from_name" placeholder="Your name" value={form.from_name} onChange={handleChange} required style={inputStyle} onFocus={(e) => (e.target.style.borderColor = 'var(--border-accent)')} onBlur={(e) => (e.target.style.borderColor = 'var(--border)')} />
@@ -107,6 +107,7 @@ function Connect() {
         @media (max-width: 640px) {
           .connect-section { padding: 56px 20px 80px !important; }
           .connect-form-pad { padding: 24px 20px !important; }
+          .connect-form-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>
