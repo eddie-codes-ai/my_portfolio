@@ -83,7 +83,7 @@ function Connect() {
                     <div style={{ textAlign: 'right', fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '6px' }}>{form.message.length}/1000</div>
                   </div>
                   {error && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--red)' }}>{error}</div>}
-                  <button type="submit" disabled={loading} style={{ alignSelf: 'flex-start', background: loading ? 'var(--accent-glow)' : 'var(--accent)', color: loading ? 'var(--accent)' : '#0a0e13', border: 'none', borderRadius: 'var(--radius-md)', padding: '14px 32px', fontFamily: 'var(--font-mono)', fontSize: '15px', fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', transition: 'all var(--transition)' }}>
+                  <button type="submit" disabled={loading} style={{ alignSelf: 'flex-start', background: loading ? 'var(--accent-glow)' : 'var(--accent)', color: loading ? 'var(--accent)' : 'var(--on-accent)', border: 'none', borderRadius: 'var(--radius-md)', padding: '14px 32px', fontFamily: 'var(--font-mono)', fontSize: '15px', fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', transition: 'all var(--transition)' }}>
                     {loading ? '$ transmitting...' : '$ transmit()'}
                   </button>
                 </form>

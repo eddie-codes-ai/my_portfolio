@@ -109,8 +109,8 @@ function BootScreen({ onComplete }: BootScreenProps) {
               width: '280px',
               height: '280px',
               borderRadius: '50%',
-              border: '1px solid rgba(167, 139, 250, 0.15)',
-              boxShadow: '0 0 30px rgba(167, 139, 250, 0.05)',
+              border: '1px solid rgba(var(--accent-rgb), 0.15)',
+              boxShadow: '0 0 30px rgba(var(--accent-rgb), 0.05)',
             }}
           />
 
@@ -121,7 +121,7 @@ function BootScreen({ onComplete }: BootScreenProps) {
               width: '200px',
               height: '200px',
               borderRadius: '50%',
-              border: '1px solid rgba(167, 139, 250, 0.08)',
+              border: '1px solid rgba(var(--accent-rgb), 0.08)',
             }}
           />
 
@@ -149,7 +149,7 @@ function BootScreen({ onComplete }: BootScreenProps) {
                   fontSize: '14px',
                   transition: 'border-color 0.4s ease',
                   boxShadow: isUnlocked
-                    ? '0 0 10px rgba(167, 139, 250, 0.2)'
+                    ? '0 0 10px rgba(var(--accent-rgb), 0.2)'
                     : 'none',
                 }}
               >
@@ -174,7 +174,7 @@ function BootScreen({ onComplete }: BootScreenProps) {
                   position: 'absolute',
                   inset: '-20px',
                   borderRadius: '50%',
-                  background: 'radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 70%)',
+                  background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.15) 0%, transparent 70%)',
                   animation: 'pulseGlow 1.5s ease infinite',
                 }}
               />
@@ -196,7 +196,7 @@ function BootScreen({ onComplete }: BootScreenProps) {
               <svg width="58" height="48" viewBox="0 0 58 48" fill="none">
                 <path
                   d="M9 44 L9 20 Q9 4 29 4 Q49 4 49 20 L49 44"
-                  stroke={isUnlocked ? '#a78bfa' : '#484f58'}
+                  stroke={isUnlocked ? 'var(--accent)' : 'var(--text-muted)'}
                   strokeWidth="7"
                   strokeLinecap="round"
                   fill="none"
@@ -215,7 +215,7 @@ function BootScreen({ onComplete }: BootScreenProps) {
                 width: '76px',
                 height: '66px',
                 background: isUnlocked
-                  ? 'linear-gradient(135deg, rgba(167,139,250,0.2), rgba(167,139,250,0.05))'
+                  ? 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.2), rgba(var(--accent-rgb), 0.05))'
                   : 'var(--bg-card)',
                 border: `2px solid ${isUnlocked ? 'var(--accent)' : 'var(--border)'}`,
                 borderRadius: '14px',
@@ -231,13 +231,13 @@ function BootScreen({ onComplete }: BootScreenProps) {
                   cx="11"
                   cy="9"
                   r="5.5"
-                  stroke={isUnlocked ? '#a78bfa' : '#484f58'}
+                  stroke={isUnlocked ? 'var(--accent)' : 'var(--text-muted)'}
                   strokeWidth="2.5"
                   style={{ transition: 'stroke 0.5s ease' }}
                 />
                 <path
                   d="M8 14 L14 14 L12 23 L10 23 Z"
-                  fill={isUnlocked ? '#a78bfa' : '#484f58'}
+                  fill={isUnlocked ? 'var(--accent)' : 'var(--text-muted)'}
                   style={{ transition: 'fill 0.5s ease' }}
                 />
               </svg>

@@ -108,32 +108,32 @@ export default function Logs() {
         .logs-inner { width: 100%; max-width: 1560px; }
         .logs-header { margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
         .logs-icon { font-size: 18px; }
-        .logs-command { font-family: 'JetBrains Mono', monospace; font-size: 18px; color: #a78bfa; letter-spacing: 0.01em; white-space: nowrap; }
-        .logs-rule { flex: 1; height: 1px; background: var(--border, #1e293b); }
+        .logs-command { font-family: 'JetBrains Mono', monospace; font-size: 18px; color: var(--accent); letter-spacing: 0.01em; white-space: nowrap; }
+        .logs-rule { flex: 1; height: 1px; background: var(--border); }
         .logs-live-badge { display: flex; align-items: center; gap: 0.4rem; position: absolute; top: 0.6rem; right: 1rem; z-index: 1; }
-        .logs-live-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; animation: pulse-dot 1.6s ease-in-out infinite; }
-        .logs-live-text { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #4ade80; letter-spacing: 0.08em; }
+        .logs-live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse-dot 1.6s ease-in-out infinite; }
+        .logs-live-text { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--green); letter-spacing: 0.08em; }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
         .logs-viewport { height: 380px; overflow: hidden; position: relative; }
         .logs-viewport::before, .logs-viewport::after { content: ''; position: absolute; left: 0; right: 0; height: 48px; z-index: 2; pointer-events: none; }
-        .logs-viewport::before { top: 0; background: linear-gradient(to bottom, var(--bg-card, #1a1a2e), transparent); }
-        .logs-viewport::after { bottom: 0; background: linear-gradient(to top, var(--bg-card, #1a1a2e), transparent); }
+        .logs-viewport::before { top: 0; background: linear-gradient(to bottom, var(--bg-card), transparent); }
+        .logs-viewport::after { bottom: 0; background: linear-gradient(to top, var(--bg-card), transparent); }
         .logs-track { will-change: transform; }
-        .commit-row { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.9rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); text-decoration: none; transition: background 0.15s ease; }
-        .commit-row:hover { background: rgba(167, 139, 250, 0.06); }
-        .commit-arrow { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #a78bfa; margin-top: 0.1rem; flex-shrink: 0; opacity: 0.8; }
+        .commit-row { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.9rem 1rem; border-bottom: 1px solid var(--hairline); text-decoration: none; transition: background 0.15s ease; }
+        .commit-row:hover { background: rgba(var(--accent-rgb), 0.08); }
+        .commit-arrow { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent); margin-top: 0.1rem; flex-shrink: 0; opacity: 0.8; }
         .commit-body { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
-        .commit-message { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+        .commit-message { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
         .commit-meta { display: flex; align-items: center; gap: 0.75rem; }
-        .commit-repo { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #64748b; }
-        .commit-sha { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #475569; background: rgba(255,255,255,0.04); padding: 0.1rem 0.4rem; border-radius: 3px; border: 1px solid rgba(255,255,255,0.06); }
-        .commit-time { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #64748b; flex-shrink: 0; margin-top: 0.1rem; }
-        .logs-state { padding: 1.5rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; color: #64748b; }
-        .logs-error { color: #fbbf24; }
-        .logs-prompt { padding: 0.75rem 1rem 0.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; color: #a78bfa; display: flex; align-items: center; gap: 0.25rem; }
-        .logs-cursor-blink { display: inline-block; width: 9px; height: 1.1em; background: #a78bfa; opacity: 0.9; animation: blink 1.1s step-end infinite; vertical-align: text-bottom; }
+        .commit-repo { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text-secondary); }
+        .commit-sha { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted); background: var(--hairline); padding: 0.1rem 0.4rem; border-radius: 3px; border: 1px solid var(--hairline); }
+        .commit-time { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text-secondary); flex-shrink: 0; margin-top: 0.1rem; }
+        .logs-state { padding: 1.5rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; color: var(--text-secondary); }
+        .logs-error { color: var(--yellow); }
+        .logs-prompt { padding: 0.75rem 1rem 0.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; color: var(--accent); display: flex; align-items: center; gap: 0.25rem; }
+        .logs-cursor-blink { display: inline-block; width: 9px; height: 1.1em; background: var(--accent); opacity: 0.9; animation: blink 1.1s step-end infinite; vertical-align: text-bottom; }
         @keyframes blink { 0%, 100% { opacity: 0.9; } 50% { opacity: 0; } }
-        .logs-updated { margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #475569; text-align: right; }
+        .logs-updated { margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-align: right; }
         @media (max-width: 600px) { .logs-section { padding: 2.5rem 1rem; } .commit-message { font-size: 0.85rem; } .logs-viewport { height: 300px; } }
       `}</style>
     </section>
