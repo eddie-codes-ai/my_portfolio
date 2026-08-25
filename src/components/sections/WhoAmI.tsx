@@ -34,7 +34,7 @@ function WhoAmI() {
         {done && <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />}
       </div>
 
-      <div className="whoami-row" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start', width: '100%', maxWidth: '1560px', flexWrap: 'wrap' }}>
+      <div className="whoami-row" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start', width: '100%', maxWidth: '1560px' }}>
         <div className="whoami-card-profile" style={{ width: '440px', flexShrink: 0 }}>
           <TerminalCard title="profile.json" accentBorder>
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '32px' }}>
@@ -91,7 +91,8 @@ function WhoAmI() {
 
       <style>{`
         @keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @media (max-width: 1050px) {
+        @media (max-width: 860px) {
+          .whoami-row { flex-wrap: wrap; }
           .whoami-card-philosophy { width: 100% !important; }
         }
         @media (max-width: 520px) {

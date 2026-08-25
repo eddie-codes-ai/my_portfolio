@@ -23,13 +23,13 @@ function Architecture() {
         {done && <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />}
       </div>
 
-      <div style={{ width: '100%', maxWidth: '1560px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+      <div className="arch-skills-grid" style={{ width: '100%', maxWidth: '1560px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
         {skills.map((skill) => <SkillBar key={skill.id} skill={skill} />)}
       </div>
 
       <div className="arch-overview" style={{ width: '100%', maxWidth: '1560px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '40px' }}>
         <div style={{ fontSize: '14px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '28px' }}>~ /system/overview</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '24px' }}>
+        <div className="arch-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
           {stats.map((stat) => (
             <div key={stat.label} style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', padding: '36px 28px', textAlign: 'center' }}>
               <div style={{ fontSize: '48px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{stat.value}</div>
@@ -44,6 +44,8 @@ function Architecture() {
         @media (max-width: 640px) {
           .arch-section { padding: 56px 20px !important; }
           .arch-overview { padding: 24px 20px !important; }
+          .arch-skills-grid { grid-template-columns: 1fr !important; }
+          .arch-stats-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>
