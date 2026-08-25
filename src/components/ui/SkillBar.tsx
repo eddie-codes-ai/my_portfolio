@@ -6,11 +6,11 @@ interface SkillBarProps {
 }
 
 const categoryColors: Record<Skill['category'], string> = {
-  frontend: '#a78bfa',
-  backend: '#60a5fa',
-  mobile: '#34d399',
-  devops: '#fbbf24',
-  database: '#f472b6',
+  frontend: 'var(--cat-frontend)',
+  backend: 'var(--cat-backend)',
+  mobile: 'var(--cat-mobile)',
+  devops: 'var(--cat-devops)',
+  database: 'var(--cat-database)',
 };
 
 function SkillBar({ skill }: SkillBarProps) {

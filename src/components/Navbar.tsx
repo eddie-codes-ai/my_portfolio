@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTheme } from '../hooks/useTheme';
 
 const navLinks = [
   { label: 'whoami', href: '#whoami' },
@@ -12,6 +13,7 @@ function Navbar() {
   const [time, setTime] = useState('');
   const [activeSection, setActiveSection] = useState('whoami');
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const updateTime = () => {
@@ -61,8 +63,9 @@ function Navbar() {
         left: 0,
         right: 0,
         zIndex: 100,
-        background: 'rgba(10, 14, 19, 0.92)',
+        background: 'var(--nav-bg)',
         backdropFilter: 'blur(12px)',
+        transition: 'background-color var(--transition), border-color var(--transition)',
         borderBottom: '1px solid var(--border)',
         display: 'flex',
         alignItems: 'center',
@@ -124,7 +127,8 @@ function Navbar() {
         })}
       </div>
 
-      {/* Right side status */}
+      {/* Right side: status, theme toggle, mobile hamburger */}
+      <div className="navbar-right" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
       <div className="navbar-status" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -152,6 +156,46 @@ function Navbar() {
         </div>
       </div>
 
+      {/* Theme toggle */}
+      <button
+        type="button"
+        className="navbar-theme-toggle"
+        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        onClick={toggleTheme}
+        style={{
+          width: '32px',
+          height: '32px',
+          borderRadius: 'var(--radius-sm)',
+          border: '1px solid var(--border)',
+          background: 'transparent',
+          color: 'var(--text-secondary)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          transition: 'border-color var(--transition), color var(--transition)',
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-accent)';
+          (e.currentTarget as HTMLButtonElement).style.color = 'var(--accent)';
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)';
+          (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)';
+        }}
+      >
+        {theme === 'dark' ? (
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+        ) : (
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        )}
+      </button>
+
       {/* Mobile hamburger toggle */}
       <button
         type="button"
@@ -164,6 +208,7 @@ function Navbar() {
         <span className="navbar-toggle-bar" />
         <span className="navbar-toggle-bar" />
       </button>
+      </div>
 
       <style>{`
         .navbar-toggle {
@@ -203,7 +248,7 @@ function Navbar() {
             right: 0;
             gap: 4px;
             padding: 12px 16px 20px;
-            background: rgba(10, 14, 19, 0.98);
+            background: var(--nav-bg-solid);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
           }
