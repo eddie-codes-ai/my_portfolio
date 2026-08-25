@@ -25,7 +25,7 @@ function WhoAmI() {
   const { displayed, done } = useTypewriter('>_ $ whoami', { speed: 55, delay: 200, triggerRef: sectionRef });
 
   return (
-    <section ref={sectionRef} id="whoami" style={{ minHeight: '100vh', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '120px 40px 80px' }}>
+    <section ref={sectionRef} id="whoami" className="whoami-section" style={{ minHeight: '100vh', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '120px 40px 80px' }}>
       <div style={{ width: '100%', maxWidth: '1560px', marginBottom: '48px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '18px' }}>
           {displayed}
@@ -34,8 +34,8 @@ function WhoAmI() {
         {done && <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />}
       </div>
 
-      <div style={{ display: 'flex', gap: '28px', alignItems: 'flex-start', width: '100%', maxWidth: '1560px' }}>
-        <div style={{ width: '440px', flexShrink: 0 }}>
+      <div className="whoami-row" style={{ display: 'flex', gap: '28px', alignItems: 'flex-start', width: '100%', maxWidth: '1560px', flexWrap: 'wrap' }}>
+        <div className="whoami-card-profile" style={{ width: '440px', flexShrink: 0 }}>
           <TerminalCard title="profile.json" accentBorder>
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '32px' }}>
               <div style={{ width: '72px', height: '72px', borderRadius: 'var(--radius-md)', background: 'var(--accent-glow)', border: '1px solid var(--border-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '26px', flexShrink: 0 }}>&lt;/&gt;</div>
@@ -72,7 +72,7 @@ function WhoAmI() {
           </TerminalCard>
         </div>
 
-        <div style={{ width: '980px', flexShrink: 0 }}>
+        <div className="whoami-card-philosophy" style={{ width: '980px', flexShrink: 0 }}>
           <TerminalCard title="philosophy.md" showDots>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {profile.philosophy.paragraphs.map((para, i) => (
@@ -89,7 +89,18 @@ function WhoAmI() {
         </div>
       </div>
 
-      <style>{`@keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
+      <style>{`
+        @keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @media (max-width: 1050px) {
+          .whoami-card-philosophy { width: 100% !important; }
+        }
+        @media (max-width: 520px) {
+          .whoami-card-profile { width: 100% !important; }
+        }
+        @media (max-width: 640px) {
+          .whoami-section { padding: 100px 20px 60px !important; }
+        }
+      `}</style>
     </section>
   );
 }

@@ -39,7 +39,7 @@ function Connect() {
   const labelStyle: React.CSSProperties = { fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '8px', display: 'block' };
 
   return (
-    <section ref={sectionRef} id="connect" style={{ minHeight: '100vh', padding: '80px 40px 120px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    <section ref={sectionRef} id="connect" className="connect-section" style={{ minHeight: '100vh', padding: '80px 40px 120px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ width: '100%', maxWidth: '1560px', marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ color: 'var(--accent)', fontSize: '18px' }}>🔒</span>
         <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '18px' }}>
@@ -59,7 +59,7 @@ function Connect() {
             </div>
             <span style={{ fontSize: '13px', color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>● ENCRYPTED</span>
           </div>
-          <div style={{ padding: '40px' }}>
+          <div className="connect-form-pad" style={{ padding: '40px' }}>
             {!submitted ? (
               <>
                 <div style={{ marginBottom: '28px' }}>
@@ -67,7 +67,7 @@ function Connect() {
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '15px', color: 'var(--text-secondary)' }}>$ Channel ready. Transmit your message below.</div>
                 </div>
                 <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
                     <div>
                       <label style={labelStyle}>👤 identifier</label>
                       <input type="text" name="from_name" placeholder="Your name" value={form.from_name} onChange={handleChange} required style={inputStyle} onFocus={(e) => (e.target.style.borderColor = 'var(--border-accent)')} onBlur={(e) => (e.target.style.borderColor = 'var(--border)')} />
@@ -102,7 +102,13 @@ function Connect() {
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--accent)' }}>© 2026 Edwin Mwai — All systems operational.</p>
         </div>
       </div>
-      <style>{`@keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
+      <style>{`
+        @keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @media (max-width: 640px) {
+          .connect-section { padding: 56px 20px 80px !important; }
+          .connect-form-pad { padding: 24px 20px !important; }
+        }
+      `}</style>
     </section>
   );
 }

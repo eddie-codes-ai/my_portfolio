@@ -24,7 +24,7 @@ function Deployments() {
   const { displayed, done } = useTypewriter('$ ls production-projects/', { speed: 50, delay: 200, triggerRef: sectionRef });
 
   return (
-    <section ref={sectionRef} id="deployments" style={{ minHeight: '100vh', padding: '80px 40px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    <section ref={sectionRef} id="deployments" className="deploy-section" style={{ minHeight: '100vh', padding: '80px 40px', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ width: '100%', maxWidth: '1560px', marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ color: 'var(--accent)', fontSize: '18px' }}>🔀</span>
         <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: '18px' }}>
@@ -39,13 +39,18 @@ function Deployments() {
           >{f.label}</button>
         ))}
       </div>
-      <div style={{ width: '100%', maxWidth: '1560px', display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'start', gap: '24px' }}>
+      <div style={{ width: '100%', maxWidth: '1560px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', alignItems: 'start', gap: '24px' }}>
         {filtered.map((project) => <ProjectCard key={project.id} project={project} />)}
       </div>
       {filtered.length === 0 && (
         <div style={{ width: '100%', maxWidth: '1560px', textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '15px' }}>no projects found in this category.</div>
       )}
-      <style>{`@keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
+      <style>{`
+        @keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @media (max-width: 640px) {
+          .deploy-section { padding: 56px 20px !important; }
+        }
+      `}</style>
     </section>
   );
 }
